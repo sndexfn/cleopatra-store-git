@@ -3,7 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Lazy client - only created when env vars are available
+export const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 export type Product = {
   id: string;
@@ -60,10 +63,11 @@ export const MOCK_PRODUCTS: Product[] = [
 ];
 
 export async function getProducts(): Promise<Product[]> {
+  if (!supabase) return MOCK_PRODUCTS;
   try {
     const { data, error } = await supabase.from('products').select('*').eq('inStock', true);
     if (error) {
-      console.warn("Could not fetch from Supabase (tables might not exist yet), returning mock data.");
+      console.warn("Could not fetch from Supabase, returning mock data.");
       return MOCK_PRODUCTS;
     }
     if (data && data.length > 0) {
@@ -76,6 +80,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
+  if (!supabase) return MOCK_PRODUCTS.find(p => p.id === id);
   try {
     const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
     if (error || !data) {
