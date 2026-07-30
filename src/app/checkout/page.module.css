@@ -1,0 +1,85 @@
+.main {
+  flex: 1;
+  padding: 4rem 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: var(--gold-pale);
+  margin-bottom: 2rem;
+  font-family: var(--font-heading);
+  text-align: center;
+}
+
+.form {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 2.5rem;
+  border-radius: 8px;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-base);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--gold-primary);
+}
+
+.submitBtn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold-primary), var(--gold-brown));
+  color: var(--bg-primary);
+  border: none;
+  padding: 1rem;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.successMessage {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.successIcon {
+  color: var(--success);
+  margin-bottom: 1.5rem;
+}
+
+.successTitle {
+  font-size: 2rem;
+  color: var(--gold-pale);
+  margin-bottom: 1rem;
+}
