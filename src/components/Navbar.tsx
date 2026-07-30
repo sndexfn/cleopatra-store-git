@@ -21,7 +21,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
-          <Image src="/logo.svg" alt="كليوباترا" width={90} height={55} style={{objectFit:'contain'}} priority />
+          <Image src="/logo.jpg" alt="كليوباترا" width={110} height={65} style={{objectFit:'contain'}} priority />
         </Link>
         
         <div className={styles.navLinks}>
