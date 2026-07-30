@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Navbar.module.css";
-import { ShoppingBag, User } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 
@@ -20,7 +21,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
-          CLEOPATRA
+          <Image src="/logo.svg" alt="كليوباترا" width={90} height={55} style={{objectFit:'contain'}} priority />
         </Link>
         
         <div className={styles.navLinks}>

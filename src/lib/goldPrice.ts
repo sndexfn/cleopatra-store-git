@@ -20,10 +20,25 @@ let mockGoldPrices: GoldPrices = {
 };
 
 export async function getLiveGoldPrices(): Promise<GoldPrices> {
-  // Simulate network delay
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(mockGoldPrices), 500);
-  });
+  try {
+    const res = await fetch('/api/gold-price', { next: { revalidate: 3600 } });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.log('Using fallback gold prices');
+  }
+  // Fallback
+  const fallbackOunce = 3350;
+  const fallbackGram = fallbackOunce / 31.1035;
+  return {
+    usdPerOunce: fallbackOunce,
+    usdPerGram24k: fallbackGram,
+    usdPerGram21k: fallbackGram * (21 / 24),
+    usdPerGram18k: fallbackGram * (18 / 24),
+    iqdExchangeRate: 1310,
+    lastUpdated: new Date().toISOString(),
+  };
 }
 
 export function calculateFinalPrice(
