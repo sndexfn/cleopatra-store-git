@@ -8,6 +8,13 @@ export const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
+export const ADMIN_EMAIL = 'cleopatrah1975@gmail.com';
+
+export function isAdmin(email?: string | null): boolean {
+  if (!email) return false;
+  return email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+}
+
 export type Product = {
   id: string;
   name: string;

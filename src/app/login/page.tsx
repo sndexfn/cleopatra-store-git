@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function LoginPage() {
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [step, setStep] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -18,18 +18,15 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
-    // Format phone: add country code if not present
-    const formattedPhone = phone.startsWith('+') ? phone : `+964${phone.replace(/^0/, '')}`;
-
     if (!supabase) {
       setError('خدمة تسجيل الدخول غير متاحة حالياً');
       setLoading(false);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
+    const { error } = await supabase.auth.signInWithOtp({ email: email });
     if (error) {
-      setError('حدث خطأ أثناء إرسال الرمز. تأكد من رقم الهاتف.');
+      setError('حدث خطأ أثناء إرسال الرمز. تأكد من البريد الإلكتروني.');
     } else {
       setStep('otp');
     }
@@ -41,8 +38,6 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
-    const formattedPhone = phone.startsWith('+') ? phone : `+964${phone.replace(/^0/, '')}`;
-
     if (!supabase) {
       setError('خدمة تسجيل الدخول غير متاحة حالياً');
       setLoading(false);
@@ -50,9 +45,9 @@ export default function LoginPage() {
     }
 
     const { error } = await supabase.auth.verifyOtp({
-      phone: formattedPhone,
+      email: email,
       token: otp,
-      type: 'sms'
+      type: 'email'
     });
 
     if (error) {
@@ -70,21 +65,21 @@ export default function LoginPage() {
           <Image src="/logo.png" alt="كليوباترا" width={120} height={120} style={{objectFit:'contain'}} />
         </div>
         <h1 className={styles.title}>تسجيل الدخول</h1>
-        <p className={styles.subtitle}>أدخل رقم هاتفك لتسجيل الدخول أو إنشاء حساب جديد</p>
+        <p className={styles.subtitle}>أدخل بريدك الإلكتروني لتسجيل الدخول أو إنشاء حساب جديد</p>
 
-        {step === 'phone' ? (
+        {step === 'email' ? (
           <form onSubmit={handleSendOtp} className={styles.form}>
-            <label className={styles.label}>رقم الهاتف</label>
+            <label className={styles.label}>البريد الإلكتروني</label>
             <input
               className={styles.input}
-              type="tel"
-              placeholder="07XXXXXXXXX"
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
               required
               dir="ltr"
             />
-            <p className={styles.hint}>سيتم إرسال رمز تحقق (OTP) إلى هاتفك عبر SMS</p>
+            <p className={styles.hint}>سيتم إرسال رمز تحقق (OTP) إلى بريدك الإلكتروني</p>
             {error && <p className={styles.error}>{error}</p>}
             <button type="submit" className={styles.btn} disabled={loading}>
               {loading ? 'جاري الإرسال...' : 'إرسال رمز التحقق'}
@@ -107,11 +102,12 @@ export default function LoginPage() {
             <button type="submit" className={styles.btn} disabled={loading}>
               {loading ? 'جاري التحقق...' : 'تأكيد الدخول'}
             </button>
-            <button type="button" className={styles.backBtn} onClick={() => setStep('phone')}>
-              ← تغيير رقم الهاتف
+            <button type="button" className={styles.backBtn} onClick={() => setStep('email')}>
+              ← تغيير البريد الإلكتروني
             </button>
           </form>
         )}
+
       </div>
     </main>
   );
