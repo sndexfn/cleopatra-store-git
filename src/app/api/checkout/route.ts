@@ -1,4 +1,10 @@
 import { NextResponse } from 'next/server';
+import { Product } from '@/lib/supabase';
+
+type OrderItem = {
+  product: Product;
+  quantity: number;
+};
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +24,7 @@ export async function POST(request: Request) {
       message += `📍 *العنوان:* ${customer.address}\n\n`;
       message += `🛍️ *المنتجات:*\n`;
       
-      items.forEach((item: any, index: number) => {
+      items.forEach((item: OrderItem, index: number) => {
         message += `${index + 1}. ${item.product.name} (عيار ${item.product.karat}) x${item.quantity}\n`;
         message += `   الوزن: ${item.product.weightGrams}غ | الصياغة: $${item.product.makingChargeUSD}\n`;
       });

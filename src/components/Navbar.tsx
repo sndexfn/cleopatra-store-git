@@ -3,44 +3,121 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Navbar.module.css";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, TrendingUp } from "lucide-react";
 import { useCartStore } from "@/lib/store";
+import { useLangStore } from "@/lib/langStore";
+import { arabicDict, englishDict } from "@/lib/dictionary";
+import { getLiveGoldPrices, GoldPrices, formatCurrency } from "@/lib/goldPrice";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { items } = useCartStore();
+  const { lang, setLang } = useLangStore();
   const [mounted, setMounted] = useState(false);
+  const [prices, setPrices] = useState<GoldPrices | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
+    // Fetch live prices for ticker
+    getLiveGoldPrices().then(p => setPrices(p));
   }, []);
+
+  const d = lang === "ar" ? arabicDict : englishDict;
+  const isRtl = lang === "ar";
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
 
-  return (
-    <nav className={styles.navbar}>
-      <div className={styles.container}>
-        <Link href="/" className={styles.logo}>
-          <Image src="/logo.jpg" alt="كليوباترا" width={110} height={65} style={{objectFit:'contain'}} priority />
-        </Link>
-        
-        <div className={styles.navLinks}>
-          <Link href="/" className={styles.link}>الرئيسية</Link>
-          <Link href="/shop" className={styles.link}>المتجر</Link>
-          <Link href="/about" className={styles.link}>من نحن</Link>
-        </div>
+  const toggleLang = () => {
+    const newLang = lang === "ar" ? "en" : "ar";
+    setLang(newLang);
+    // Dynamic document lang and dir update
+    document.documentElement.lang = newLang;
+    document.documentElement.dir = newLang === "ar" ? "rtl" : "ltr";
+  };
 
-        <div className={styles.actions}>
-          <Link href="/cart" className={styles.cartButton} aria-label="السلة">
-            <ShoppingBag size={22} />
-            <span>{mounted ? totalItems : 0}</span>
-          </Link>
-          
-          <Link href="/login" className={styles.loginBtn}>
-            تسجيل الدخول
-          </Link>
+  return (
+    <div className={styles.navbarContainer}>
+      {/* Live Gold Price Ticker */}
+      <div className={styles.ticker} dir="rtl">
+        <div className={styles.tickerContent}>
+          <div className={styles.tickerItem}>
+            <TrendingUp size={14} style={{ color: "var(--gold-primary)" }} />
+            <span className={styles.tickerLabel}>{d.liveGoldPrice}</span>
+          </div>
+          {prices ? (
+            <>
+              <div className={styles.tickerItem}>
+                <span>{d.karat24}:</span>
+                <span className={styles.tickerPrice}>
+                  {formatCurrency(prices.usdPerGram24k * prices.iqdExchangeRate, "IQD")}
+                </span>
+                <span className={styles.tickerPrice}>
+                  ({formatCurrency(prices.usdPerGram24k, "USD")})
+                </span>
+              </div>
+              <div className={styles.tickerItem}>
+                <span>{d.karat21}:</span>
+                <span className={styles.tickerPrice}>
+                  {formatCurrency(prices.usdPerGram21k * prices.iqdExchangeRate, "IQD")}
+                </span>
+                <span className={styles.tickerPrice}>
+                  ({formatCurrency(prices.usdPerGram21k, "USD")})
+                </span>
+              </div>
+              <div className={styles.tickerItem}>
+                <span>{d.karat18}:</span>
+                <span className={styles.tickerPrice}>
+                  {formatCurrency(prices.usdPerGram18k * prices.iqdExchangeRate, "IQD")}
+                </span>
+                <span className={styles.tickerPrice}>
+                  ({formatCurrency(prices.usdPerGram18k, "USD")})
+                </span>
+              </div>
+            </>
+          ) : (
+            <span>{d.loading}</span>
+          )}
         </div>
       </div>
-    </nav>
+
+      {/* Main Navigation */}
+      <nav className={styles.navbar} dir={isRtl ? "rtl" : "ltr"}>
+        <div className={styles.container}>
+          <Link href="/" className={styles.logo}>
+            <Image
+              src="/logo.jpg"
+              alt={d.siteTitle}
+              width={140}
+              height={70}
+              className={styles.logoImage}
+              priority
+            />
+          </Link>
+          
+          <div className={styles.navLinks}>
+            <Link href="/" className={styles.link}>{d.home}</Link>
+            <Link href="/shop" className={styles.link}>{d.shop}</Link>
+            <Link href="/about" className={styles.link}>{d.about}</Link>
+          </div>
+
+          <div className={styles.actions}>
+            {/* Language Toggle Button */}
+            <button onClick={toggleLang} className={styles.langBtn} aria-label="Toggle Language">
+              {lang === "ar" ? "English" : "العربية"}
+            </button>
+
+            <Link href="/cart" className={styles.cartButton} aria-label={d.cart}>
+              <ShoppingBag size={20} />
+              <span className={styles.cartCount}>{mounted ? totalItems : 0}</span>
+            </Link>
+
+            <Link href="/login" className={styles.loginBtn}>
+              {d.login}
+            </Link>
+          </div>
+        </div>
+      </nav>
+    </div>
   );
 }
