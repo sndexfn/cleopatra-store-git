@@ -62,7 +62,7 @@ export default function LoginPage() {
     <main className={styles.main}>
       <div className={styles.card}>
         <div className={styles.logoWrap}>
-          <Image src="/logo.png" alt="كليوباترا" width={120} height={120} style={{objectFit:'contain'}} />
+          <Image src="/logo.jpg" alt="كليوباترا" width={120} height={120} style={{objectFit:'contain'}} />
         </div>
         <h1 className={styles.title}>تسجيل الدخول</h1>
         <p className={styles.subtitle}>أدخل بريدك الإلكتروني لتسجيل الدخول أو إنشاء حساب جديد</p>
