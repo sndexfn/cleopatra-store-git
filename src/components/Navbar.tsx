@@ -10,10 +10,12 @@ import { arabicDict, englishDict } from "@/lib/dictionary";
 import { getLiveGoldPrices, GoldPrices, formatCurrency } from "@/lib/goldPrice";
 import { useEffect, useState } from "react";
 import { supabase, isAdmin } from "@/lib/supabase";
+import { useUIStore } from "@/lib/uiStore";
 
 export default function Navbar() {
   const { items } = useCartStore();
   const { lang, setLang } = useLangStore();
+  const { openCart, openMenu } = useUIStore();
   const [mounted, setMounted] = useState(false);
   const [prices, setPrices] = useState<GoldPrices | null>(null);
   const [user, setUser] = useState<any>(null);
@@ -145,10 +147,10 @@ export default function Navbar() {
               </Link>
             )}
 
-            <Link href="/cart" className={styles.cartButton} aria-label={d.cart}>
+            <button onClick={openCart} className={styles.cartButton} aria-label={d.cart}>
               <ShoppingBag size={20} />
               <span className={styles.cartCount}>{mounted ? totalItems : 0}</span>
-            </Link>
+            </button>
 
             {mounted && user ? (
               <span className={styles.userName}>
@@ -161,7 +163,7 @@ export default function Navbar() {
             )}
 
             {/* Hamburger Menu */}
-            <button className={styles.iconBtn} aria-label="Menu" style={{ marginRight: '10px' }}>
+            <button onClick={openMenu} className={styles.iconBtn} aria-label="Menu" style={{ marginRight: '10px' }}>
               <Menu size={24} />
             </button>
           </div>

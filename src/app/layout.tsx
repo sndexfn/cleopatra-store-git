@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "المتجر الإلكتروني الفخم للذهب والمجوهرات",
 };
 
+import Drawers from "@/components/Drawers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,7 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className={`${cairo.variable} ${playfair.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Drawers />
+      </body>
     </html>
   );
 }
