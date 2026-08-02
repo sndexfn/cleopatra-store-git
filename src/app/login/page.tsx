@@ -7,6 +7,7 @@ import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,15 @@ export default function LoginPage() {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOtp({ email: email });
+    const { error } = await supabase.auth.signInWithOtp({ 
+      email: email,
+      options: {
+        data: {
+          full_name: fullName || email.split('@')[0],
+        }
+      }
+    });
+    
     if (error) {
       setError('حدث خطأ أثناء إرسال الرمز. تأكد من البريد الإلكتروني.');
     } else {
@@ -65,10 +74,19 @@ export default function LoginPage() {
           <Image src="/logo.jpg" alt="كليوباترا" width={120} height={120} style={{objectFit:'contain'}} />
         </div>
         <h1 className={styles.title}>تسجيل الدخول</h1>
-        <p className={styles.subtitle}>أدخل بريدك الإلكتروني لتسجيل الدخول أو إنشاء حساب جديد</p>
+        <p className={styles.subtitle}>أدخل بياناتك لتسجيل الدخول أو إنشاء حساب جديد</p>
 
         {step === 'email' ? (
           <form onSubmit={handleSendOtp} className={styles.form}>
+            <label className={styles.label}>الاسم الكامل (للمستخدمين الجدد)</label>
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="الاسم"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+            />
+            
             <label className={styles.label}>البريد الإلكتروني</label>
             <input
               className={styles.input}

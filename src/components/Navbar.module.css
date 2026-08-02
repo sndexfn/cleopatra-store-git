@@ -195,11 +195,57 @@
   100% { transform: translateX(-30%); }
 }
 
+.iconBtn {
+  background: none;
+  border: none;
+  color: var(--gold-pale);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.iconBtn:hover {
+  color: var(--gold-primary);
+}
+
+.adminBtn {
+  background-color: transparent;
+  color: var(--gold-primary);
+  border: 1px solid var(--gold-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.adminBtn:hover {
+  background-color: var(--gold-primary);
+  color: var(--bg-dark);
+}
+
+.userName {
+  color: var(--gold-primary);
+  font-weight: 600;
+  margin: 0 0.5rem;
+  font-size: 0.95rem;
+}
+
 @media (max-width: 768px) {
   .navLinks {
     display: none;
   }
   .ticker {
     font-size: 0.75rem;
+  }
+  .userName {
+    display: none;
+  }
+  .adminBtn {
+    display: none;
   }
 }

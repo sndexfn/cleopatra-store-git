@@ -3,24 +3,50 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Navbar.module.css";
-import { ShoppingBag, TrendingUp } from "lucide-react";
+import { ShoppingBag, TrendingUp, Search, Menu } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useLangStore } from "@/lib/langStore";
 import { arabicDict, englishDict } from "@/lib/dictionary";
 import { getLiveGoldPrices, GoldPrices, formatCurrency } from "@/lib/goldPrice";
 import { useEffect, useState } from "react";
+import { supabase, isAdmin } from "@/lib/supabase";
 
 export default function Navbar() {
   const { items } = useCartStore();
   const { lang, setLang } = useLangStore();
   const [mounted, setMounted] = useState(false);
   const [prices, setPrices] = useState<GoldPrices | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [isAdminUser, setIsAdminUser] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     // Fetch live prices for ticker
     getLiveGoldPrices().then(p => setPrices(p));
+    
+    // Fetch user
+    if (supabase) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setUser(session.user);
+          setIsAdminUser(isAdmin(session.user.email));
+        }
+      });
+      
+      const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+          setUser(session.user);
+          setIsAdminUser(isAdmin(session.user.email));
+        } else {
+          setUser(null);
+          setIsAdminUser(false);
+        }
+      });
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    }
   }, []);
 
   const d = lang === "ar" ? arabicDict : englishDict;
@@ -102,19 +128,42 @@ export default function Navbar() {
           </div>
 
           <div className={styles.actions}>
+            {/* Search Icon */}
+            <button className={styles.iconBtn} aria-label="Search">
+              <Search size={20} />
+            </button>
+
             {/* Language Toggle Button */}
             <button onClick={toggleLang} className={styles.langBtn} aria-label="Toggle Language">
-              {lang === "ar" ? "English" : "العربية"}
+              {lang === "ar" ? "EN" : "ع"}
             </button>
+
+            {/* Manager Control */}
+            {mounted && isAdminUser && (
+              <Link href="/admin" className={styles.adminBtn}>
+                لوحة تحكم المدير
+              </Link>
+            )}
 
             <Link href="/cart" className={styles.cartButton} aria-label={d.cart}>
               <ShoppingBag size={20} />
               <span className={styles.cartCount}>{mounted ? totalItems : 0}</span>
             </Link>
 
-            <Link href="/login" className={styles.loginBtn}>
-              {d.login}
-            </Link>
+            {mounted && user ? (
+              <span className={styles.userName}>
+                 {user.user_metadata?.full_name || user.email?.split('@')[0]}
+              </span>
+            ) : (
+              <Link href="/login" className={styles.loginBtn}>
+                {d.login}
+              </Link>
+            )}
+
+            {/* Hamburger Menu */}
+            <button className={styles.iconBtn} aria-label="Menu" style={{ marginRight: '10px' }}>
+              <Menu size={24} />
+            </button>
           </div>
         </div>
       </nav>
