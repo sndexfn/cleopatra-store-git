@@ -16,6 +16,7 @@ export default function CartPage() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
     getLiveGoldPrices().then(setPrices);
   }, []);
@@ -37,13 +38,13 @@ export default function CartPage() {
     <>
       <Navbar />
       <main className={styles.main}>
-        <h1 className={styles.title}>سلة المشتريات</h1>
-        
+        <h1 className={styles.title}>سلة التسوق</h1>
+
         {items.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>السلة فارغة حالياً.</p>
-            <Link href="/shop" style={{ color: "var(--gold-primary)", marginTop: "1rem", display: "inline-block" }}>
-              تصفح المتجر
+          <div style={{ textAlign: "center", padding: "4rem 0" }}>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>سلة التسوق فارغة حالياً.</p>
+            <Link href="/shop" className={styles.checkoutBtn} style={{ display: "inline-block", width: "auto" }}>
+              العودة للمتجر
             </Link>
           </div>
         ) : (
@@ -51,74 +52,69 @@ export default function CartPage() {
             <div className={styles.itemsList}>
               {items.map(item => {
                 let itemTotalUSD = 0;
-                let itemTotalIQD = 0;
                 if (prices) {
-                  const p = calculateFinalPrice(item.product.weightGrams, item.product.karat, item.product.makingChargeUSD, prices);
-                  itemTotalUSD = p.totalUSD * item.quantity;
-                  itemTotalIQD = p.totalIQD * item.quantity;
+                  const itemPrice = calculateFinalPrice(item.product.weightGrams, item.product.karat, item.product.makingChargeUSD, prices);
+                  itemTotalUSD = itemPrice.totalUSD;
                 }
 
                 return (
                   <div key={item.product.id} className={styles.cartItem}>
                     <img src={item.product.imageUrl} alt={item.product.name} className={styles.itemImage} />
                     <div className={styles.itemDetails}>
-                      <div>
-                        <h3 className={styles.itemName}>{item.product.name}</h3>
-                        <p className={styles.itemSpecs}>عيار {item.product.karat} | الوزن: {item.product.weightGrams} غرام</p>
-                        <p style={{ color: 'var(--gold-primary)', marginTop: '0.5rem', fontWeight: 600 }}>
-                          {prices ? formatCurrency(itemTotalUSD, 'USD') : 'جاري الحساب...'}
-                        </p>
-                      </div>
+                      <h3 className={styles.itemName}>{item.product.name}</h3>
+                      <p className={styles.itemMeta}>عيار {item.product.karat} | {item.product.weightGrams}غرام</p>
                       
-                      <div className={styles.itemActions}>
-                        <div className={styles.quantityControl}>
-                          <button 
-                            className={styles.qtyBtn} 
-                            onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
-                          >-</button>
-                          <span>{item.quantity}</span>
-                          <button 
-                            className={styles.qtyBtn} 
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          >+</button>
-                        </div>
-                        
+                      <div className={styles.quantityControl}>
+                        <button
+                          onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
+                          className={styles.qBtn}
+                        >-</button>
+                        <span className={styles.quantity}>{item.quantity}</span>
                         <button 
-                          className={styles.removeBtn}
-                          onClick={() => removeItem(item.product.id)}
-                        >
-                          <Trash2 size={18} /> إزالة
-                        </button>
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          className={styles.qBtn}
+                        >+</button>
                       </div>
+                    </div>
+
+                    <div className={styles.itemPriceArea}>
+                      {prices ? (
+                        <>
+                          <span className={styles.itemPriceUSD}>{formatCurrency(itemTotalUSD * item.quantity, 'USD')}</span>
+                          <span className={styles.itemPriceIQD}>~ {formatCurrency(itemTotalUSD * item.quantity * prices.iqdExchangeRate, 'IQD')}</span>
+                        </>
+                      ) : (
+                        <span>جاري الحساب...</span>
+                      )}
+
+                      <button onClick={() => removeItem(item.product.id)} className={styles.removeBtn} aria-label="حذف">
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            <div className={styles.summary}>
+            <div className={styles.summaryCard}>
               <h2 className={styles.summaryTitle}>ملخص الطلب</h2>
+
               <div className={styles.summaryRow}>
-                <span>عدد العناصر:</span>
-                <span>{items.reduce((acc, i) => acc + i.quantity, 0)}</span>
-              </div>
-              <div className={styles.summaryRow}>
-                <span>أجور التوصيل:</span>
-                <span>مجاناً</span>
-              </div>
-              
-              <div className={styles.summaryTotal}>
-                <span>المجموع الكلي:</span>
-                <div style={{ textAlign: 'left' }}>
-                  <div>{prices ? formatCurrency(grandTotalUSD, 'USD') : '...'}</div>
-                  <div style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                    {prices ? formatCurrency(grandTotalIQD, 'IQD') : '...'}
-                  </div>
-                </div>
+                <span>المجموع بالدولار:</span>
+                <span className={styles.totalUSD}>{formatCurrency(grandTotalUSD, 'USD')}</span>
               </div>
 
-              <Link href="/checkout" style={{ display: 'block' }}>
-                <button className={styles.checkoutBtn}>إتمام الشراء</button>
+              <div className={styles.summaryRow}>
+                <span>المجموع بالدينار:</span>
+                <span className={styles.totalIQD}>{formatCurrency(grandTotalIQD, 'IQD')}</span>
+              </div>
+
+              <div className={styles.note}>
+                * يتم تحديث الأسعار تلقائياً بناءً على سعر الذهب العالمي لحظياً.
+              </div>
+
+              <Link href="/checkout" className={styles.checkoutBtn}>
+                الانتقال للدفع
               </Link>
             </div>
           </div>

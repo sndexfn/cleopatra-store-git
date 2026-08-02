@@ -1,27 +1,28 @@
 :root {
   /* Colors */
-  --bg-primary: #050b14; /* Deep Navy Background */
-  --bg-secondary: #0a1323; /* Lighter Navy */
-  --bg-card: #0d192e; /* Card Navy */
+  --bg-primary: #030712; /* Deep Obsidian Black-Navy */
+  --bg-secondary: #0b1528; /* Luxurious Dark Royal Navy */
+  --bg-card: #0f1e36; /* Premium Lighter Navy Card */
+  --bg-card-hover: #15294a; /* Hover state for card */
   
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+  --text-primary: #f8fafc; /* Sleek White */
+  --text-secondary: #cbd5e1; /* Off-White Gray */
+  --text-muted: #94a3b8; /* Muted Slate Gray */
   
-  --gold-primary: #d4af37; /* Metallic Gold */
-  --gold-pale: #e6c27a; /* Pale Gold */
-  --gold-brown: #996515; /* Golden Brown */
-  --gold-accent: #fde047; /* Bright Gold for small accents */
+  --gold-primary: #c5a85c; /* Cleopatra Royal Gold */
+  --gold-pale: #e2d1a6; /* Premium Champagne Pale Gold */
+  --gold-brown: #8a6f2d; /* Antique Bronze Gold */
+  --gold-accent: #f59e0b; /* Bright Gold for small accents */
   
-  --border-color: rgba(212, 175, 55, 0.2); /* Gold tinted border */
-  --border-color-strong: rgba(212, 175, 55, 0.4);
+  --border-color: rgba(197, 168, 92, 0.25); /* Elegant Royal Gold tinted border */
+  --border-color-strong: rgba(197, 168, 92, 0.5);
   
   --success: #10b981;
   --error: #ef4444;
 
   /* Layout */
   --container-max: 1200px;
-  --header-height: 80px;
+  --header-height: 85px;
   
   /* Fonts */
   --font-base: var(--font-cairo), sans-serif;
@@ -59,7 +60,7 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 a:hover {
@@ -70,23 +71,26 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 600;
   color: var(--gold-pale);
+  letter-spacing: 0.03em;
 }
 
 button {
   cursor: pointer;
   font-family: var(--font-base);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Scrollbar styling */
+/* Custom premium scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--gold-brown);
-  border-radius: 4px;
+  background: linear-gradient(180deg, var(--gold-brown), var(--gold-primary));
+  border-radius: 5px;
+  border: 2px solid var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gold-primary);
